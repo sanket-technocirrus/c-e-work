@@ -1,0 +1,5 @@
+- git clone ->
+- npm install
+- install docker desktop -> https://docs.docker.com/get-docker/
+- follow steps given in this post -> https://denishoti.medium.com/how-to-self-host-judge0-api-on-your-pc-locally-all-you-need-to-know-ad8a2b64fd1
+- npm start
