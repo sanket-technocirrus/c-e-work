@@ -21,3 +21,4 @@ https://github.com/sanket-technocirrus/my-code-editor.git
   after compile and execute check if the result is matching to the expected output
 
 - 6th version
+  version 6 admin api's admin can see which organizations has signed up, can delete organizations

@@ -1,0 +1,55 @@
+/* Style for the whole dashboard container */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Style for the header */
+.dashboard-header {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Style for the table */
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+/* Style for table header */
+.dashboard-table thead th {
+  background-color: #333;
+  color: #fff;
+  padding: 12px;
+  text-align: center;
+}
+
+/* Style for table body */
+.dashboard-table tbody td {
+  border: 1px solid #ddd;
+  padding: 12px;
+}
+
+/* Style for table body row */
+.dashboard-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Style for delete button */
+.delete-button {
+  background-color: #cc0000;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.delete-button:hover {
+  background-color: #b30000;
+}
