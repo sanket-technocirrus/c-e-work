@@ -22,3 +22,6 @@ https://github.com/sanket-technocirrus/my-code-editor.git
 
 - 6th version
   version 6 admin api's admin can see which organizations has signed up, can delete organizations
+
+- 7th version
+  organization crud i.e crud with test

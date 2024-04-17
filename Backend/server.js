@@ -1,4 +1,4 @@
-// // version 6 admin api's admin can see which organizations has signed up, can delete organizations
+// // // version 7 organization CRUD i.e Tests CRUD
 
 const express = require("express");
 const cors = require("cors");
@@ -102,6 +102,7 @@ app.post("/login", async (req, res) => {
         res.json({
           message: "Login successful",
           token,
+          user_id: user.user_id,
           role: user.role,
           error: null,
         });
@@ -198,6 +199,286 @@ app.delete("/users/:userId", verifyToken, (req, res) => {
       return res.status(500).json({ error: "Internal Server Error" });
     }
     res.status(200).json({ message: "User deleted successfully" });
+  });
+});
+
+// User Dashboard Endpoint
+app.get("/user/dashboard/:user_id", verifyToken, (req, res) => {
+  const { user_id } = req.params;
+  // Extract user_id from request parameters
+  console.log("USER Id: ", req.user.user_id);
+  // You can perform actions related to the user dashboard here
+  res.json({ message: `Welcome to User Dashboard, user ${user_id}!` });
+});
+
+// Assuming you have a route to fetch tests for a specific user in your backend
+
+// Fetch tests for a specific user endpoint
+app.get("/tests/user/:user_id", verifyToken, (req, res) => {
+  const { user_id } = req.params;
+  db.query(
+    "SELECT test_id, test_title, test_description FROM tests WHERE created_by = ?",
+    [user_id],
+    (err, results) => {
+      if (err) {
+        console.error("Error fetching tests:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      res.json(results);
+    }
+  );
+});
+
+// Backend API to fetch questions on create test page
+app.get("/api/questions", (req, res) => {
+  // Query the database to fetch all questions
+  db.query("SELECT * FROM questions", (err, results) => {
+    if (err) {
+      console.error("Error fetching questions:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    res.json(results);
+  });
+});
+
+// Update the route to add a question to a test
+app.post("/tests/:test_id/add-question", async (req, res) => {
+  const { test_id } = req.params;
+  const { question_id, test_title, test_description, created_by } = req.body;
+
+  try {
+    // Check if the test exists
+    const testExists = await new Promise((resolve, reject) => {
+      db.query(
+        "SELECT * FROM tests WHERE test_id = ?",
+        [test_id],
+        (err, results) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results.length > 0);
+          }
+        }
+      );
+    });
+
+    if (!testExists) {
+      // If the test doesn't exist, create it
+      await new Promise((resolve, reject) => {
+        db.query(
+          "INSERT INTO tests (test_id, test_title, test_description, created_by) VALUES (?, ?, ?, ?)",
+          [test_id, test_title, test_description, created_by],
+          (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          }
+        );
+      });
+    }
+
+    // Insert the test-question association into the database
+    await new Promise((resolve, reject) => {
+      db.query(
+        "INSERT INTO test_questions (test_id, question_id) VALUES (?, ?)",
+        [test_id, question_id],
+        (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        }
+      );
+    });
+
+    console.log("Question added to test successfully");
+    res.status(201).json({ message: "Question added to test successfully" });
+  } catch (error) {
+    console.error("Error adding question to test:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Update the route to generate a unique test ID
+app.post("/tests-user/generate-id", verifyToken, (req, res) => {
+  // Generate a unique test ID
+  let test_id;
+  const generateTestID = () => Math.floor(Math.random() * 1000000);
+
+  const checkTestID = () => {
+    // Generate a test ID
+    test_id = generateTestID();
+    // Check if the generated test ID already exists in the database
+    const sql = "SELECT * FROM tests WHERE test_id = ?";
+    db.query(sql, [test_id], (err, results) => {
+      if (err) {
+        console.error("Error checking test ID:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      // If the test ID doesn't exist in the database, return it
+      if (results.length === 0) {
+        return res.status(200).json({ test_id });
+      }
+      // If the test ID already exists, generate a new one
+      checkTestID();
+    });
+  };
+
+  // Call the function to start generating a test ID
+  checkTestID();
+});
+
+// Add a new DELETE endpoint to delete a test when clicked delete button on user dashboard page
+app.delete("/tests/:test_id", verifyToken, (req, res) => {
+  const testId = req.params.test_id;
+  // Delete associated records from the test_questions table first
+  db.query(
+    "DELETE FROM test_questions WHERE test_id = ?",
+    [testId],
+    (err, result) => {
+      if (err) {
+        console.error("Error deleting associated test questions:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      // Once associated records are deleted, delete the test from the tests table
+      db.query(
+        "DELETE FROM tests WHERE test_id = ?",
+        [testId],
+        (err, result) => {
+          if (err) {
+            console.error("Error deleting test:", err);
+            return res.status(500).json({ error: "Internal Server Error" });
+          }
+          res.status(200).json({ message: "Test deleted successfully" });
+        }
+      );
+    }
+  );
+});
+
+// Backend API to fetch questions for a specific test (view test button click)
+app.get("/tests/:test_id/questions", verifyToken, (req, res) => {
+  const { test_id } = req.params;
+  // Fetch questions for the specified test_id from the database
+  db.query(
+    "SELECT question_id, question_text FROM questions WHERE question_id IN (SELECT question_id FROM test_questions WHERE test_id = ?)",
+    [test_id],
+    (err, results) => {
+      if (err) {
+        console.error("Error fetching questions for test:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      res.json(results);
+    }
+  );
+});
+
+// //apis for edit test component
+
+// Get test details by test ID
+app.get("/tests/:testId", (req, res) => {
+  const testId = req.params.testId;
+  const query = "SELECT * FROM tests WHERE test_id = ?";
+  db.query(query, [testId], (err, result) => {
+    if (err) {
+      console.error("Error fetching test details:", err);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+    if (result.length === 0) {
+      res.status(404).json({ error: "Test not found" });
+      return;
+    }
+    res.status(200).json(result[0]);
+  });
+});
+
+// Get questions by test ID
+app.get("/tests/:testId/questions", (req, res) => {
+  const testId = req.params.testId;
+  const query =
+    "SELECT questions.question_id, questions.question_text FROM questions INNER JOIN test_questions ON questions.question_id = test_questions.question_id WHERE test_questions.test_id = ?";
+  db.query(query, [testId], (err, result) => {
+    if (err) {
+      console.error("Error fetching test questions:", err);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+    res.status(200).json(result);
+  });
+});
+
+// Delete question from test by question ID
+app.delete("/tests/:testId/questions/:questionId", (req, res) => {
+  const testId = req.params.testId;
+  const questionId = req.params.questionId;
+  const query =
+    "DELETE FROM test_questions WHERE test_id = ? AND question_id = ?";
+  db.query(query, [testId, questionId], (err, result) => {
+    if (err) {
+      console.error("Error deleting question from test:", err);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: "Question not found in the test" });
+      return;
+    }
+    res
+      .status(200)
+      .json({ message: "Question deleted from test successfully" });
+  });
+});
+
+// Update test details by test ID
+app.put("/tests/:testId", (req, res) => {
+  const testId = req.params.testId;
+  const { test_title, test_description } = req.body;
+  const query =
+    "UPDATE tests SET test_title = ?, test_description = ? WHERE test_id = ?";
+  db.query(query, [test_title, test_description, testId], (err, result) => {
+    if (err) {
+      console.error("Error updating test details:", err);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: "Test not found" });
+      return;
+    }
+    res.status(200).json({ message: "Test details updated successfully" });
+  });
+});
+
+// Add question to test by question ID
+app.post("/tests/:testId/questions/:questionId", (req, res) => {
+  const testId = req.params.testId;
+  const questionId = req.params.questionId;
+  const query =
+    "INSERT INTO test_questions (test_id, question_id) VALUES (?, ?)";
+  db.query(query, [testId, questionId], (err, result) => {
+    if (err) {
+      console.error("Error adding question to test:", err);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+    res.status(200).json({ message: "Question added to test successfully" });
+  });
+});
+
+// Get all questions
+app.get("/api/all-questions", (req, res) => {
+  const query = "SELECT * FROM questions";
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error fetching questions:", err);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+    res.status(200).json(result);
   });
 });
 

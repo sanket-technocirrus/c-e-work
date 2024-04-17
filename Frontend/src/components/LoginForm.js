@@ -17,12 +17,14 @@ const LoginForm = () => {
       });
       if (response.data.error === null) {
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user_id", response.data.user_id); // Store user_id dynamically
         localStorage.setItem("role", response.data.role); // Store user role
         if (response.data.role === 1) {
-          navigate("/admin/dashboard"); // Redirect to admin dashboard if role is admin
+          navigate("/admin/dashboard");
         } else {
-          // navigate("/landing"); // Redirect to landing page if role is user
-          navigate("/questions");
+          // Redirect based on user_id
+          console.log("USER Id: ", response.data.user_id);
+          navigate(`/user/dashboard/${response.data.user_id}`);
         }
       }
     } catch (error) {

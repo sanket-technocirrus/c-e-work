@@ -1,4 +1,4 @@
-// // version 6 admin api's admin can see which organizations has signed up, can delete organizations
+// // version 7 organization CRUD i.e Tests CRUD
 
 import React, { useEffect, useState } from "react";
 import CodeEditorWindow from "./CodeEditorWindow";
