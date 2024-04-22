@@ -8,6 +8,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const uuid = require("uuid");
 const db = require("./DBconfig");
+const { v4: uuidv4 } = require("uuid");
 
 require("dotenv").config();
 const port = process.env.PORT || 3000;
@@ -97,7 +98,7 @@ app.post("/login", async (req, res) => {
         const token = jwt.sign(
           { email: user.email, role: user.role },
           process.env.JWT_SECRET,
-          { expiresIn: "1h" }
+          { expiresIn: "12h" }
         );
         res.json({
           message: "Login successful",
@@ -212,8 +213,8 @@ app.get("/user/dashboard/:user_id", verifyToken, (req, res) => {
 });
 
 // Assuming you have a route to fetch tests for a specific user in your backend
-
-// Fetch tests for a specific user endpoint
+// //user dashboard apis----------------------------------------------------------------------------------------------
+// Fetch tests for a specific user endpoint (shows test on userdashboard of that specific loggged in user)
 app.get("/tests/user/:user_id", verifyToken, (req, res) => {
   const { user_id } = req.params;
   db.query(
@@ -229,6 +230,7 @@ app.get("/tests/user/:user_id", verifyToken, (req, res) => {
   );
 });
 
+// //create test page------------------------------------------------------------------------
 // Backend API to fetch questions on create test page
 app.get("/api/questions", (req, res) => {
   // Query the database to fetch all questions
@@ -241,13 +243,13 @@ app.get("/api/questions", (req, res) => {
   });
 });
 
-// Update the route to add a question to a test
-app.post("/tests/:test_id/add-question", async (req, res) => {
+// Update the route to create a test with selected questions
+app.post("/tests/:test_id/create", async (req, res) => {
   const { test_id } = req.params;
-  const { question_id, test_title, test_description, created_by } = req.body;
+  const { test_title, test_description, created_by, questions } = req.body;
 
   try {
-    // Check if the test exists
+    // Check if the test already exists
     const testExists = await new Promise((resolve, reject) => {
       db.query(
         "SELECT * FROM tests WHERE test_id = ?",
@@ -262,8 +264,8 @@ app.post("/tests/:test_id/add-question", async (req, res) => {
       );
     });
 
+    // If the test doesn't exist, create it
     if (!testExists) {
-      // If the test doesn't exist, create it
       await new Promise((resolve, reject) => {
         db.query(
           "INSERT INTO tests (test_id, test_title, test_description, created_by) VALUES (?, ?, ?, ?)",
@@ -279,29 +281,32 @@ app.post("/tests/:test_id/add-question", async (req, res) => {
       });
     }
 
-    // Insert the test-question association into the database
-    await new Promise((resolve, reject) => {
-      db.query(
-        "INSERT INTO test_questions (test_id, question_id) VALUES (?, ?)",
-        [test_id, question_id],
-        (err, result) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
+    // Insert the test-question associations into the database
+    for (const question_id of questions) {
+      await new Promise((resolve, reject) => {
+        db.query(
+          "INSERT INTO test_questions (test_id, question_id) VALUES (?, ?)",
+          [test_id, question_id],
+          (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
           }
-        }
-      );
-    });
+        );
+      });
+    }
 
-    console.log("Question added to test successfully");
-    res.status(201).json({ message: "Question added to test successfully" });
+    console.log("Test created successfully");
+    res.status(201).json({ message: "Test created successfully" });
   } catch (error) {
-    console.error("Error adding question to test:", error);
+    console.error("Error creating test:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
+// //--------------------------------------------------------------------------------------------
 // Update the route to generate a unique test ID
 app.post("/tests-user/generate-id", verifyToken, (req, res) => {
   // Generate a unique test ID
@@ -376,7 +381,7 @@ app.get("/tests/:test_id/questions", verifyToken, (req, res) => {
   );
 });
 
-// //apis for edit test component
+// //apis for edit test component------------------------------------------------------------
 
 // Get test details by test ID
 app.get("/tests/:testId", (req, res) => {
@@ -480,6 +485,174 @@ app.get("/api/all-questions", (req, res) => {
     }
     res.status(200).json(result);
   });
+});
+
+// //apis for manage participant page ---------------------------------------------------------------------
+
+const validateEmail = (email) => {
+  // Regular expression for email validation
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+};
+
+// Add Participant route
+app.post("/add-participant", (req, res) => {
+  const { user_id, email, test_id } = req.body;
+
+  // Validate email format
+  if (!validateEmail(email)) {
+    return res
+      .status(400)
+      .json({ error: "Please enter a valid email address" });
+  }
+
+  // Check if the email is already associated with the testId
+  db.query(
+    "SELECT * FROM participants WHERE test_id = ? AND email = ?",
+    [test_id, email],
+    (error, results) => {
+      if (error) {
+        console.error("Error checking existing participant:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      if (results.length > 0) {
+        return res
+          .status(400)
+          .json({ error: "Email is already associated with this test" });
+      }
+
+      const participantId = uuidv4(); // Generate participant ID using uuid library
+
+      // Insert the participant into the database
+      db.query(
+        "INSERT INTO participants (participant_id, user_id, email, test_id) VALUES (?, ?, ?, ?)",
+        [participantId, user_id, email, test_id],
+        (insertError) => {
+          if (insertError) {
+            console.error("Error adding participant:", insertError);
+            return res.status(500).json({ error: "Internal Server Error" });
+          }
+
+          res.status(201).json({ message: "Participant added successfully" });
+        }
+      );
+    }
+  );
+});
+
+// Fetch participants of a specific test
+// app.get("/participants/:testId", (req, res) => {
+//   const { testId } = req.params;
+
+//   try {
+//     const participants = db.query(
+//       "SELECT * FROM participants WHERE test_id = ?",
+//       [testId]
+//     );
+
+//     res.status(200).json(participants);
+//   } catch (error) {
+//     console.error("Error fetching participants:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
+// // Delete a participant
+// app.delete("/participants/:participantId", (req, res) => {
+//   const { participantId } = req.params;
+
+//   try {
+//     db.query("DELETE FROM participants WHERE participant_id = ?", [
+//       participantId,
+//     ]);
+
+//     res.status(200).json({ message: "Participant deleted successfully" });
+//   } catch (error) {
+//     console.error("Error deleting participant:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
+app.get("/participants/:testId", (req, res) => {
+  const { testId } = req.params;
+
+  // Fetch participants of a specific test
+  db.query(
+    "SELECT * FROM participants WHERE test_id = ?",
+    [testId],
+    (error, participants) => {
+      if (error) {
+        console.error("Error fetching participants:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      res.status(200).json(participants);
+    }
+  );
+});
+
+// Delete a participant
+app.delete("/participants/:participantId", (req, res) => {
+  const { participantId } = req.params;
+
+  // Delete participant from the database
+  db.query(
+    "DELETE FROM participants WHERE participant_id = ?",
+    [participantId],
+    (error) => {
+      if (error) {
+        console.error("Error deleting participant:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      res.status(200).json({ message: "Participant deleted successfully" });
+    }
+  );
+});
+
+// //attempt test apis---------------------------------------------------------
+
+app.post("/attempt-test", (req, res) => {
+  const { email, testId } = req.body;
+
+  // Check if the email exists for the given test ID
+  db.query(
+    "SELECT * FROM participants WHERE email = ? AND test_id = ?",
+    [email, testId],
+    (err, results) => {
+      if (err) {
+        console.error("Error checking participant:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      const isValid = results.length > 0;
+      res.json({ isValid: isValid });
+    }
+  );
+});
+
+// //question ui api-----------------------------------------------------------------------
+// Endpoint to fetch questions by test ID
+
+app.get("/questions/:testId", (req, res) => {
+  const { testId } = req.params;
+
+  try {
+    db.query(
+      "SELECT questions.question_id, questions.question_text FROM questions INNER JOIN test_questions ON questions.question_id = test_questions.question_id WHERE test_questions.test_id = ?",
+      [testId],
+      (err, results) => {
+        if (err) {
+          console.error("Error fetching questions:", err);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+        res.status(200).json(results);
+      }
+    );
+  } catch (error) {
+    console.error("Error fetching questions:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.listen(port, () => {

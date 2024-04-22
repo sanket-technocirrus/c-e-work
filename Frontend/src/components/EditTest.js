@@ -210,7 +210,7 @@ const EditTest = () => {
         {/* <button type="submit">Save Changes</button> */}
       </form>
       <button className="save-button" onClick={handleSaveChanges}>
-        Save Changes
+        Go To Dashboard
       </button>
     </div>
   );

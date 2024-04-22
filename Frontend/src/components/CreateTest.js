@@ -6,6 +6,8 @@ const CreateTest = () => {
   const [testTitle, setTestTitle] = useState("");
   const [testDescription, setTestDescription] = useState("");
   const [questions, setQuestions] = useState([]);
+  const [selectedQuestions, setSelectedQuestions] = useState([]);
+  const [addedQuestions, setAddedQuestions] = useState([]);
 
   const navigate = useNavigate();
   const { test_id } = useParams();
@@ -22,26 +24,35 @@ const CreateTest = () => {
     fetchQuestions();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Navigate to user dashboard
-    navigate(`/user/dashboard/${localStorage.getItem("user_id")}`);
+  const handleAddQuestion = (questionId) => {
+    setSelectedQuestions((prevSelectedQuestions) => [
+      ...prevSelectedQuestions,
+      questionId,
+    ]);
+    setAddedQuestions((prevAddedQuestions) => [
+      ...prevAddedQuestions,
+      questionId,
+    ]);
   };
 
-  const handleAddQuestion = async (questionId) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const createdBy = localStorage.getItem("user_id");
-      await axios.post(`http://localhost:5000/tests/${test_id}/add-question`, {
+      await axios.post(`http://localhost:5000/tests/${test_id}/create`, {
         test_title: testTitle,
         test_description: testDescription,
         created_by: createdBy,
-        question_id: questionId,
+        questions: selectedQuestions,
       });
-      // Optionally update UI to indicate the question has been added to the test
+      // Redirect to user dashboard after test creation
+      navigate(`/user/dashboard/${createdBy}`);
     } catch (error) {
-      console.error("Error adding question to test:", error);
+      console.error("Error creating test:", error);
     }
   };
+
+  const isQuestionAdded = (questionId) => addedQuestions.includes(questionId);
 
   return (
     <div className="container">
@@ -66,29 +77,33 @@ const CreateTest = () => {
             required
           />
         </div>
+        <h2>Available Questions</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Question Text</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {questions.map((question) => (
+              <tr key={question.question_id}>
+                <td>{question.question_text}</td>
+                <td>
+                  <button
+                    type="button"
+                    onClick={() => handleAddQuestion(question.question_id)}
+                    disabled={isQuestionAdded(question.question_id)}
+                  >
+                    {isQuestionAdded(question.question_id) ? "Added" : "Add"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
         <button type="submit">Create Test</button>
       </form>
-      <h2>Available Questions</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Question Text</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {questions.map((question) => (
-            <tr key={question.question_id}>
-              <td>{question.question_text}</td>
-              <td>
-                <button onClick={() => handleAddQuestion(question.question_id)}>
-                  Add
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 };

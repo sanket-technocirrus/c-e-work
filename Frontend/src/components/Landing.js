@@ -58,6 +58,8 @@ const Landing = () => {
   const [leftWidth, setLeftWidth] = useState("30%"); // Initial width for the left section
 
   const location = useLocation();
+  const questionText = location.state && location.state.questionText;
+
   console.log(location["state"]);
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
@@ -244,7 +246,8 @@ const Landing = () => {
               className="question-section overflow-y-auto"
               style={{ maxHeight: "calc(100vh - 80px)" }}
             >
-              <QuestionSection question={location["state"]["data"]} />
+              {/* <QuestionSection question={location["state"]["data"]} /> */}
+              <QuestionSection questionText={questionText} />
             </div>
           </div>
           <div className="px-4 py-2 w-full">
@@ -309,3 +312,4 @@ const Landing = () => {
 };
 
 export default Landing;
+// //-------------------------------------------------------------

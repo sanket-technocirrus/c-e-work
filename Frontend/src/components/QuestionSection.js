@@ -1,16 +1,16 @@
 import React from "react";
 import "./QuestionSection.css";
 
-const QuestionSection = ({ question }) => {
+const QuestionSection = ({ questionText }) => {
   return (
     <div className="question-section">
-      {question ? (
+      {questionText ? (
         <>
-          <h2>{question.title}</h2>
-          <p className="problem-statement">{question.description}</p>
+          <h2>Question</h2>
+          <p className="question-text">{questionText}</p>
         </>
       ) : (
-        <p>Question not found</p>
+        <p>No question selected</p>
       )}
     </div>
   );

@@ -10,6 +10,8 @@ import UserDashboard from "./components/UserDashboard";
 import CreateTest from "./components/CreateTest";
 import TestView from "./components/TestView";
 import EditTest from "./components/EditTest";
+import ManageParticipants from "./components/ManageParticipants";
+import AttemptTest from "./components/AttemptTest";
 
 function App() {
   return (
@@ -20,11 +22,17 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/landing" element={<Landing />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/questions" element={<QuestionUi />} />
+          {/* <Route path="/questions" element={<QuestionUi />} /> */}
+          <Route path="/questions/:testId" element={<QuestionUi />} />
           <Route path="/user/dashboard/:user_id" element={<UserDashboard />} />
           <Route path="/create-test/:test_id" element={<CreateTest />} />
           <Route path="/test/:testId/view-questions" element={<TestView />} />
           <Route path="/edit-test/:testId" element={<EditTest />} />
+          <Route
+            path="/manage-participants/:testId"
+            element={<ManageParticipants />}
+          />
+          <Route path="/attempt-test-page" element={<AttemptTest />} />
         </Routes>
       </div>
     </Router>

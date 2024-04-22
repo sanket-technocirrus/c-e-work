@@ -67,16 +67,24 @@ const UserDashboard = () => {
     window.location.href = `/edit-test/${testId}`;
   };
 
+  const handleManageParticipants = (testId) => {
+    // Redirect the user to the manage participants page for the specified test
+    window.location.href = `/manage-participants/${testId}`;
+  };
+
   return (
     <div className="container">
       <h1 className="header">Welcome to User Dashboard</h1>
-      <button onClick={handleCreateNewTest} className="create-test-button">
-        Create New Test
-      </button>
+      <div>
+        <button onClick={handleCreateNewTest} className="create-test-button">
+          Create New Test
+        </button>
+      </div>
       <h2>Your Tests</h2>
       <table>
         <thead>
           <tr>
+            <th>Test ID</th>
             <th>Title</th>
             <th>Description</th>
             <th>Actions</th>
@@ -85,6 +93,7 @@ const UserDashboard = () => {
         <tbody>
           {tests.map((test) => (
             <tr key={test.test_id}>
+              <td>{test.test_id}</td>
               <td>{test.test_title}</td>
               <td>{test.test_description}</td>
               <td className="actions">
@@ -96,6 +105,9 @@ const UserDashboard = () => {
                 </button>
                 <button onClick={() => handleEditTest(test.test_id)}>
                   Edit
+                </button>
+                <button onClick={() => handleManageParticipants(test.test_id)}>
+                  Manage Participants
                 </button>
               </td>
             </tr>

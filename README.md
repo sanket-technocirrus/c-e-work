@@ -25,3 +25,5 @@ https://github.com/sanket-technocirrus/my-code-editor.git
 
 - 7th version
   organization crud i.e crud with test
+
+- 8th version
