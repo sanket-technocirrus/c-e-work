@@ -1,5 +1,3 @@
-// // // version 7 organization CRUD i.e Tests CRUD
-
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -125,17 +123,67 @@ app.get("/admin/dashboard", verifyToken, (req, res) => {
   res.json({ message: "Welcome to Admin Dashboard!" });
 });
 
-// Landing Page Endpoint
 app.get("/questions", verifyToken, (req, res) => {
   res.json({ message: "Welcome to Question Page!" });
 });
 
-// Compilation endpoint
-app.post("/compile", (req, res) => {
-  // Extract code and input from request body
-  const { code, customInput, languageId } = req.body;
+// // Landing Page Endpoint -----------------------------------------------------------------
 
-  console.log("received language id", languageId);
+// // Compilation endpoint
+// app.post("/compile", (req, res) => {
+//   // Extract code and input from request body
+//   const { code, customInput, languageId } = req.body;
+
+//   console.log("received language id", languageId);
+//   // Prepare data for compilation request
+//   const requestData = {
+//     source_code: code,
+//     language_id: languageId,
+//     stdin: customInput,
+//   };
+
+//   // Make a POST request to the Judge0 API compilation endpoint
+//   axios
+//     .post(compileEndpoint, requestData)
+//     .then((response) => {
+//       console.log("Compilation request sent to Judge0:", response.data);
+//       // Extract jobId from response and send it back to the client
+//       const jobId = response.data.token;
+//       res.json({ jobId });
+//     })
+//     .catch((error) => {
+//       console.error("Error compiling code:", error);
+//       res.status(500).json({ error: "Error compiling code" });
+//     });
+// });
+
+// //for test case functionality
+//working for 1 test case
+// Route to fetch input from test_cases table based on questionId
+app.get("/test_cases/:questionId", (req, res) => {
+  const { questionId } = req.params;
+  const sql = "SELECT input FROM test_cases WHERE question_id = ?";
+  db.query(sql, [questionId], (err, result) => {
+    if (err) {
+      console.error("Error fetching input:", err);
+      return res.status(500).json({ error: "Error fetching input" });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ error: "No input found for the question" });
+    }
+    const input = result[0].input;
+    res.json({ input });
+  });
+});
+
+// Route to handle compilation and execution
+app.post("/compile", (req, res) => {
+  // Extract code, customInput, languageId, and questionId from request body
+  const { code, customInput, languageId, questionId } = req.body;
+
+  // Fetch input from test_cases table based on questionId
+  // (This part is handled in the frontend)
+
   // Prepare data for compilation request
   const requestData = {
     source_code: code,
@@ -144,6 +192,8 @@ app.post("/compile", (req, res) => {
   };
 
   // Make a POST request to the Judge0 API compilation endpoint
+  // (Assuming you're using Judge0 API for compilation)
+  // Replace compileEndpoint with your actual Judge0 API endpoint
   axios
     .post(compileEndpoint, requestData)
     .then((response) => {
@@ -654,6 +704,8 @@ app.get("/questions/:testId", (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+// //api for test cases----------------------------------------------------------------------
+// Endpoint to compile and run code and execute test cases
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

@@ -25,38 +25,6 @@ CREATE TABLE questions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- sample input for questions
--- Question 1
-INSERT INTO questions (question_text) VALUES ('Write a function to calculate the factorial of a number.');
-
--- Question 2
-INSERT INTO questions (question_text) VALUES ('Write a function to check if a string is a palindrome.');
-
--- Question 3
-INSERT INTO questions (question_text) VALUES ('Write a function to reverse a number.');
-
--- Question 4
-INSERT INTO questions (question_text) VALUES ('Write a function to calculate the nth Fibonacci number.');
-
--- Question 5
-INSERT INTO questions (question_text) VALUES ('Write a function to calculate the sum of elements in an array.');
-
--- Question 6
-INSERT INTO questions (question_text) VALUES ('Write a function to calculate the nth triangular number.');
-
--- Question 7
-INSERT INTO questions (question_text) VALUES ('Write a function to check if two strings are anagrams of each other.');
-
--- Question 8
-INSERT INTO questions (question_text) VALUES ('Write a function to calculate the LCM of two numbers.');
-
--- Question 9
-INSERT INTO questions (question_text) VALUES ('Write a function to find the smallest element in an array.');
-
--- Question 10
-INSERT INTO questions (question_text) VALUES ('Write a function to find the second smallest element in an array.');
-
-
 -- CREATE TABLE test_cases (
 --     test_case_id VARCHAR(36) PRIMARY KEY,
 --     question_id INT,
@@ -90,6 +58,38 @@ CREATE TABLE test_cases (
     expected_output VARCHAR(255),
     FOREIGN KEY (question_id) REFERENCES questions(question_id)
 );
+
+-- sample input for questions
+-- Question 1
+INSERT INTO questions (question_text) VALUES ('Write a function to calculate the factorial of a number.');
+
+-- Question 2
+INSERT INTO questions (question_text) VALUES ('Write a function to check if a string is a palindrome.');
+
+-- Question 3
+INSERT INTO questions (question_text) VALUES ('Write a function to reverse a number.');
+
+-- Question 4
+INSERT INTO questions (question_text) VALUES ('Write a function to calculate the nth Fibonacci number.');
+
+-- Question 5
+INSERT INTO questions (question_text) VALUES ('Write a function to calculate the sum of elements in an array.');
+
+-- Question 6
+INSERT INTO questions (question_text) VALUES ('Write a function to calculate the nth triangular number.');
+
+-- Question 7
+INSERT INTO questions (question_text) VALUES ('Write a function to check if two strings are anagrams of each other.');
+
+-- Question 8
+INSERT INTO questions (question_text) VALUES ('Write a function to calculate the LCM of two numbers.');
+
+-- Question 9
+INSERT INTO questions (question_text) VALUES ('Write a function to find the smallest element in an array.');
+
+-- Question 10
+INSERT INTO questions (question_text) VALUES ('Write a function to find the second smallest element in an array.');
+
 
 
 -- sample inputs for test cases

@@ -20,7 +20,7 @@ function App() {
         <Routes>
           <Route path="/" element={<SignupForm />} />
           <Route path="/login" element={<LoginForm />} />
-          <Route path="/landing" element={<Landing />} />
+          <Route path="/landing/:questionId" element={<Landing />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           {/* <Route path="/questions" element={<QuestionUi />} /> */}
           <Route path="/questions/:testId" element={<QuestionUi />} />

@@ -32,7 +32,7 @@ const QuestionUi = () => {
             <h3>{question.question_text}</h3>
 
             <Link
-              to={`/landing`}
+              to={`/landing/${question.question_id}`}
               state={{ questionText: question.question_text }}
             >
               View Question
