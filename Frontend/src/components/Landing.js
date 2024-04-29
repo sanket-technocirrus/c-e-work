@@ -314,7 +314,7 @@
 
 // export default Landing;
 // // //-------------------------------------------------------------
-// //for test case
+// //working for 1 test case
 
 import React, { useEffect, useState } from "react";
 import CodeEditorWindow from "./CodeEditorWindow";
@@ -335,7 +335,7 @@ import QuestionSection from "./QuestionSection";
 import { useLocation, useParams } from "react-router-dom";
 
 const pythonDefault = `#write code here
-num = int(input()) 
+num = int(input())
 
 def factorial(n):
     if n == 0 or n == 1:
@@ -343,7 +343,7 @@ def factorial(n):
     else:
         return n * factorial(n - 1)
 
-result = factorial(num)  
+result = factorial(num)
 print("faactorial of", num, "is:", result)
 `;
 
@@ -628,3 +628,5 @@ const Landing = () => {
 };
 
 export default Landing;
+// //--------------------------------------------
+// //for comparing output
