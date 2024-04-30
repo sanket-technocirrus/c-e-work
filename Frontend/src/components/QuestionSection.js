@@ -1,13 +1,15 @@
 import React from "react";
 import "./QuestionSection.css";
 
-const QuestionSection = ({ questionText }) => {
+// for showing question passed from question ui on landing page
+
+const QuestionSection = ({ questionContent }) => {
   return (
     <div className="question-section">
-      {questionText ? (
+      {questionContent ? (
         <>
           <h2>Question</h2>
-          <p className="question-text">{questionText}</p>
+          <div dangerouslySetInnerHTML={{ __html: questionContent }}></div>
         </>
       ) : (
         <p>No question selected</p>

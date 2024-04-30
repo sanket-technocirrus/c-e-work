@@ -12,7 +12,12 @@ const QuestionUi = () => {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/questions/${testId}`
+          `http://localhost:5000/tests/${testId}/questions`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
         );
         setQuestions(response.data);
       } catch (error) {
@@ -29,11 +34,18 @@ const QuestionUi = () => {
       <ul>
         {questions.map((question, index) => (
           <li key={index} className="question-box">
-            <h3>{question.question_text}</h3>
+            <div
+              dangerouslySetInnerHTML={{ __html: question.question_content }}
+            ></div>
+            {/*  for showing question passed from question ui on landing page */}
 
             <Link
-              to={`/landing/${question.question_id}`}
-              state={{ questionText: question.question_text }}
+              to={{
+                pathname: `/landing/${question.question_id}`,
+                state: {
+                  questionContent: question.question_content,
+                },
+              }}
             >
               View Question
             </Link>

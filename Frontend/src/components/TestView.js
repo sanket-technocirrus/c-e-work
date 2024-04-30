@@ -33,7 +33,12 @@ const TestView = () => {
       <h1>Test Questions</h1>
       <ul>
         {questions.map((question) => (
-          <li key={question.question_id}>{question.question_text}</li>
+          <li key={question.question_id}>
+            {/* <h3>Question ID: {question.question_id}</h3> */}
+            <div
+              dangerouslySetInnerHTML={{ __html: question.question_content }}
+            ></div>
+          </li>
         ))}
       </ul>
     </div>

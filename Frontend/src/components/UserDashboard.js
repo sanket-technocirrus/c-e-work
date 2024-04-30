@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 import "./UserDashboard.css"; // Import the CSS file
 
 const UserDashboard = () => {
@@ -42,6 +43,18 @@ const UserDashboard = () => {
       console.error("Error generating test ID:", error);
     }
   };
+
+  // const handleCreateNewTest = async () => {
+  //   try {
+  //     // Generate UUID as test ID
+  //     const test_id = uuidv4();
+
+  //     // Navigate to the CreateTest page with the generated test_id
+  //     window.location.href = `/create-test/${test_id}`;
+  //   } catch (error) {
+  //     console.error("Error generating test ID:", error);
+  //   }
+  // };
 
   const handleDeleteTest = async (testId) => {
     try {

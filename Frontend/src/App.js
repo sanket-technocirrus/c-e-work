@@ -22,7 +22,6 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/landing/:questionId" element={<Landing />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          {/* <Route path="/questions" element={<QuestionUi />} /> */}
           <Route path="/questions/:testId" element={<QuestionUi />} />
           <Route path="/user/dashboard/:user_id" element={<UserDashboard />} />
           <Route path="/create-test/:test_id" element={<CreateTest />} />

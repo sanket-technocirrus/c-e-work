@@ -36,7 +36,7 @@ const EditTest = () => {
     const fetchAllQuestions = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/all-questions",
+          "http://localhost:5000/api/questions",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -179,7 +179,12 @@ const EditTest = () => {
           <ul>
             {questions.map((question) => (
               <li key={question.question_id}>
-                {question.question_text}
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: question.question_content,
+                  }}
+                ></div>
+
                 <button
                   className="delete-button"
                   onClick={() => handleDeleteQuestion(question.question_id)}
