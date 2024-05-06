@@ -14,6 +14,7 @@ const AttemptTest = () => {
       });
       const { isValid } = response.data;
       if (isValid) {
+        localStorage.setItem("email", email);
         window.location.href = `/questions/${testId}`;
         // window.location.href = "/questions";
       } else {

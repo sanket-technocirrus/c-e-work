@@ -26,7 +26,7 @@
 //         return n * factorial(n - 1)
 
 // result = factorial(num)
-// print("faactorial of", num, "is:", result)
+// print(result)
 // `;
 
 // const Landing = () => {
@@ -38,14 +38,14 @@
 //   const [language, setLanguage] = useState(languageOptions[0]);
 //   const [leftWidth, setLeftWidth] = useState("30%"); // Initial width for the left section
 
+//   const { questionId } = useParams();
+
 //   const location = useLocation();
 
 //   // for showing question passed from question ui on landing page
 //   const questionContent = location.state && location.state.questionContent;
-//   console.log("Question Content:", questionContent);
-//   console.log(location["state"]);
-
-//   const { questionId } = useParams();
+//   // console.log("Question Content:", questionContent);
+//   // console.log(location["state"]);
 
 //   const enterPress = useKeyPress("Enter");
 //   const ctrlPress = useKeyPress("Control");
@@ -81,14 +81,22 @@
 //       code,
 //       customInput,
 //       languageId: language.id,
+//       questionId: questionId,
 //     };
 
 //     axios
-//       .post("http://localhost:5000/compile", formData)
+//       .post("http://localhost:5000/compile", formData) // with this call if there is custom input provided, the code is compiled once with the custom input. If there is no custom input, the code is compiled once, and then the test cases are fetched to run the code against them.
 //       .then(function (response) {
 //         console.log("Compilation request sent to backend:", response.data);
 //         const jobId = response.data.jobId;
-//         pollForResult(jobId);
+//         // Check if custom input is provided
+//         if (customInput) {
+//           // If custom input is provided, run the code against it only
+//           runUserCode(jobId, []);
+//         } else {
+//           // If custom input is not provided, fetch test cases and run the code against all test cases
+//           fetchTestCases(questionId, jobId);
+//         }
 //       })
 //       .catch((err) => {
 //         console.error("Error compiling code:", err);
@@ -97,19 +105,87 @@
 //       });
 //   };
 
-//   const pollForResult = (jobId) => {
+//   const fetchTestCases = (questionId, jobId) => {
+//     axios
+//       .get(`http://localhost:5000/get-all-testcases/${questionId}`)
+//       .then((response) => {
+//         console.log("Test cases retrieved:", response.data);
+//         const testCases = response.data;
+//         // Run user's code against each test case
+//         runUserCode(jobId, testCases);
+//       })
+//       .catch((err) => {
+//         console.error("Error fetching test cases:", err);
+//         setProcessing(false);
+//         showErrorToast();
+//       });
+//   };
+
+//   const runUserCode = (jobId, testCases) => {
+//     // If testCases array is empty, it means custom input was provided, so just run once
+//     if (testCases.length === 0) {
+//       // Run user's code once against the provided custom input
+//       const formData = {
+//         code,
+//         customInput,
+//         languageId: language.id,
+//       };
+
+//       axios
+//         .post("http://localhost:5000/compile", formData) // After the initial compilation, if there are test cases to be run against the code, additional compilation requests are made for each test case. For each test case, the code is compiled again with the specific test case input provided.
+//         .then(function (response) {
+//           console.log("Compilation request sent to backend:", response.data);
+//           const resultJobId = response.data.jobId;
+//           // Poll for result of user's code against custom input
+//           pollForResult(resultJobId, null);
+//         })
+//         .catch((err) => {
+//           console.error("Error compiling code for custom input:", err);
+//           showErrorToast("Error compiling code for custom input");
+//         });
+//     } else {
+//       // Run user's code against each test case
+//       testCases.forEach((testCase) => {
+//         const inputToUse = testCase.inputContent;
+
+//         const formData = {
+//           code,
+//           customInput: inputToUse,
+//           languageId: language.id,
+//         };
+
+//         axios
+//           .post("http://localhost:5000/compile", formData)
+//           .then(function (response) {
+//             console.log("Compilation request sent to backend:", response.data);
+//             const resultJobId = response.data.jobId;
+//             // Poll for result of user's code against current test case
+//             pollForResult(resultJobId, testCase);
+//           })
+//           .catch((err) => {
+//             console.error("Error compiling code for test case:", err);
+//             showErrorToast(
+//               `Error compiling code for test case ${testCase.test_case_id}`
+//             );
+//           });
+//       });
+//     }
+//   };
+
+//   const pollForResult = (jobId, testCase) => {
 //     axios
 //       .get(`http://localhost:5000/results/${jobId}`)
-//       .then(function (response) {
+//       .then((response) => {
 //         console.log("Polling response:", response.data);
 //         if (response.data.status.description === "In Queue") {
 //           setTimeout(() => {
-//             pollForResult(jobId);
+//             pollForResult(jobId, testCase);
 //           }, 2000);
 //         } else {
 //           setProcessing(false);
-//           setOutputDetails(response.data);
-//           showSuccessToast(`Compiled Successfully!`);
+//           const outputDetails = response.data;
+//           // Compare output with expected output for current test case
+//           compareOutput(outputDetails, testCase);
 //         }
 //       })
 //       .catch((err) => {
@@ -117,6 +193,29 @@
 //         setProcessing(false);
 //         showErrorToast();
 //       });
+//   };
+
+//   const compareOutput = (outputDetails, testCase) => {
+//     console.log(outputDetails);
+//     console.log(testCase);
+
+//     // Check if outputDetails and testCase are not null
+//     if (outputDetails && testCase) {
+//       // Compare output with expected output
+//       const userOutput = outputDetails.stdout.trim();
+//       const expectedOutput = testCase.outputContent.trim();
+
+//       console.log("User Output:", userOutput);
+//       console.log("Expected Output:", expectedOutput);
+
+//       if (userOutput === expectedOutput) {
+//         console.log(`Test case ${testCase.test_case_id} passed`);
+//       } else {
+//         console.log(`Test case ${testCase.test_case_id} failed`);
+//       }
+//     } else {
+//       console.log("result => ", outputDetails.stdout.trim());
+//     }
 //   };
 
 //   function handleThemeChange(th) {
@@ -299,9 +398,8 @@
 // };
 
 // export default Landing;
-// //---------------------------------------
-// // for implementing testcases
-// // this code is working for multiple testcases when user dont give custom input
+// //----------------------------------------------------------------
+// // for execution table
 // import React, { useEffect, useState } from "react";
 // import CodeEditorWindow from "./CodeEditorWindow";
 // import axios from "axios";
@@ -384,17 +482,23 @@
 //     const formData = {
 //       code,
 //       customInput,
-//       languageId: language.id, // Example language ID
-//       questionId: questionId, // Pass question ID to backend
+//       languageId: language.id,
+//       questionId: questionId,
 //     };
 
 //     axios
-//       .post("http://localhost:5000/compile", formData)
+//       .post("http://localhost:5000/compile", formData) // with this call if there is custom input provided, the code is compiled once with the custom input. If there is no custom input, the code is compiled once, and then the test cases are fetched to run the code against them.
 //       .then(function (response) {
 //         console.log("Compilation request sent to backend:", response.data);
 //         const jobId = response.data.jobId;
-//         // Once compilation is successful, fetch test cases
-//         fetchTestCases(questionId, jobId);
+//         // Check if custom input is provided
+//         if (customInput) {
+//           // If custom input is provided, run the code against it only
+//           runUserCode(jobId, []);
+//         } else {
+//           // If custom input is not provided, fetch test cases and run the code against all test cases
+//           fetchTestCases(questionId, jobId);
+//         }
 //       })
 //       .catch((err) => {
 //         console.error("Error compiling code:", err);
@@ -420,47 +524,73 @@
 //   };
 
 //   const runUserCode = (jobId, testCases) => {
-//     // Iterate over each test case
-//     testCases.forEach((testCase) => {
-//       let inputToUse = customInput; // Initialize input to use
-
-//       // If custom input is not provided, use test case input
-//       if (!customInput) {
-//         inputToUse = testCase.inputContent;
-//       }
-
+//     // If testCases array is empty, it means custom input was provided, so just run once
+//     if (testCases.length === 0) {
+//       // Run user's code once against the provided custom input
 //       const formData = {
 //         code,
-//         customInput: inputToUse, // Use custom input or test case input
-//         languageId: language.id, // Example language ID
+//         customInput,
+//         languageId: language.id,
 //       };
 
 //       axios
-//         .post("http://localhost:5000/compile", formData)
+//         .post("http://localhost:5000/compile", formData) // After the initial compilation, if there are test cases to be run against the code, additional compilation requests are made for each test case. For each test case, the code is compiled again with the specific test case input provided.
 //         .then(function (response) {
 //           console.log("Compilation request sent to backend:", response.data);
 //           const resultJobId = response.data.jobId;
-//           // Poll for result of user's code against current test case
-//           pollForResult(resultJobId, testCase);
+//           // Poll for result of user's code against custom input
+//           pollForResult(resultJobId, null);
 //         })
 //         .catch((err) => {
-//           console.error("Error compiling code for test case:", err);
-//           showErrorToast(
-//             `Error compiling code for test case ${testCase.test_case_id}`
-//           );
+//           console.error("Error compiling code for custom input:", err);
+//           showErrorToast("Error compiling code for custom input");
 //         });
-//     });
+//     } else {
+//       // Run user's code against each test case
+//       testCases.forEach((testCase) => {
+//         const inputToUse = testCase.inputContent;
+
+//         const formData = {
+//           code,
+//           customInput: inputToUse,
+//           languageId: language.id,
+//         };
+
+//         axios
+//           .post("http://localhost:5000/compile", formData)
+//           .then(function (response) {
+//             console.log("Compilation request sent to backend:", response.data);
+//             const resultJobId = response.data.jobId;
+//             // Poll for result of user's code against current test case
+//             pollForResult(resultJobId, testCase);
+//           })
+//           .catch((err) => {
+//             console.error("Error compiling code for test case:", err);
+//             showErrorToast(
+//               `Error compiling code for test case ${testCase.test_case_id}`
+//             );
+//           });
+//       });
+//     }
 //   };
 
 //   const pollForResult = (jobId, testCase) => {
 //     axios
-//       .get(`http://localhost:5000/results/${jobId}`)
+//       .get(`http://localhost:5000/results/${jobId}`, {
+//         params: {
+//           email: localStorage.getItem("email"),
+//           testcaseId: testCase.test_case_id,
+//           questionId: testCase.question_id,
+//           points: testCase.points,
+//           inputContent: testCase.inputContent,
+//         },
+//       })
 //       .then((response) => {
 //         console.log("Polling response:", response.data);
 //         if (response.data.status.description === "In Queue") {
 //           setTimeout(() => {
 //             pollForResult(jobId, testCase);
-//           }, 5000);
+//           }, 2000);
 //         } else {
 //           setProcessing(false);
 //           const outputDetails = response.data;
@@ -476,17 +606,25 @@
 //   };
 
 //   const compareOutput = (outputDetails, testCase) => {
-//     // Compare output with expected output
-//     const userOutput = outputDetails.stdout.trim();
-//     const expectedOutput = testCase.outputContent.trim();
+//     console.log(outputDetails);
+//     console.log(testCase);
 
-//     console.log("User Output:", userOutput);
-//     console.log("Expected Output:", expectedOutput);
+//     // Check if outputDetails and testCase are not null
+//     if (outputDetails && testCase) {
+//       // Compare output with expected output
+//       const userOutput = outputDetails.stdout.trim();
+//       const expectedOutput = testCase.outputContent.trim();
 
-//     if (userOutput === expectedOutput) {
-//       console.log(`Test case ${testCase.test_case_id} passed`);
+//       console.log("User Output:", userOutput);
+//       console.log("Expected Output:", expectedOutput);
+
+//       if (userOutput === expectedOutput) {
+//         console.log(`Test case ${testCase.test_case_id} passed`);
+//       } else {
+//         console.log(`Test case ${testCase.test_case_id} failed`);
+//       }
 //     } else {
-//       console.log(`Test case ${testCase.test_case_id} failed`);
+//       console.log("result => ", outputDetails.stdout.trim());
 //     }
 //   };
 
@@ -670,9 +808,8 @@
 // };
 
 // export default Landing;
-// //----------------------------------------------------------
-// // v3 for user giving custom input then testcases should not run
-
+// //--------------------------------------------------------------------
+// //working till insert query now below code with update query
 import React, { useEffect, useState } from "react";
 import CodeEditorWindow from "./CodeEditorWindow";
 import axios from "axios";
@@ -849,7 +986,15 @@ const Landing = () => {
 
   const pollForResult = (jobId, testCase) => {
     axios
-      .get(`http://localhost:5000/results/${jobId}`)
+      .get(`http://localhost:5000/results/${jobId}`, {
+        params: {
+          email: localStorage.getItem("email"),
+          testcaseId: testCase ? testCase.test_case_id : null,
+          questionId: testCase ? testCase.question_id : null,
+          points: testCase ? testCase.points : null,
+          inputContent: testCase ? testCase.inputContent : customInput,
+        },
+      })
       .then((response) => {
         console.log("Polling response:", response.data);
         if (response.data.status.description === "In Queue") {
