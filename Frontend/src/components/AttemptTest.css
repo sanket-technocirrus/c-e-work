@@ -1,0 +1,46 @@
+.attempt-test-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.attempt-test-error {
+  color: #ff0000;
+  margin-bottom: 10px;
+}
+
+.attempt-test-form-group {
+  margin-bottom: 20px;
+}
+
+.attempt-test-form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.attempt-test-form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.attempt-test-btn-attempt {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.attempt-test-btn-attempt:hover {
+  background-color: #0056b3;
+}

@@ -1,4 +1,4 @@
-.container {
+/* .container {
   max-width: 600px;
   margin: 20px auto;
   padding: 20px;
@@ -76,4 +76,77 @@ th {
 
 tbody tr:nth-child(even) {
   background-color: #f2f2f2;
+} */
+/* -------------------------------------------------------------------- */
+/* CreateTestStyles.css */
+
+.create-test-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.create-test-container h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.create-test-container .form-group {
+  margin-bottom: 20px;
+}
+
+.create-test-container .form-group label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.create-test-container .form-group input[type="text"],
+.create-test-container .form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.create-test-container h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.create-test-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.create-test-container th,
+.create-test-container td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.create-test-container th {
+  background-color: #f2f2f2;
+}
+
+.create-test-container button {
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.create-test-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.create-test-container button:hover {
+  background-color: #45a049;
 }

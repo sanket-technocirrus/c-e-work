@@ -1,7 +1,7 @@
 /* EditTest.css */
 
 /* Container styles */
-.container {
+/* .container {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
@@ -42,7 +42,7 @@ ul li {
 }
 
 /* Button styles */
-button {
+/* button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -64,10 +64,10 @@ button {
   color: #fff;
   margin-left: auto;
   /* Align to the right */
-  display: block;
-  /* Make the buttons display as block elements */
-}
-
+/* display: block; */
+/* Make the buttons display as block elements */
+/* } */
+/*
 .delete-button:hover {
   background-color: #bd2130;
 }
@@ -77,10 +77,94 @@ button {
   color: #fff;
   margin-left: auto;
   /* Align to the right */
-  display: block;
-  /* Make the buttons display as block elements */
-}
-
+/* display: block; */
+/* Make the buttons display as block elements */
+/* } */
+/* 
 .add-button:hover {
   background-color: #218838;
+} */
+
+/* ----------------------------------------------------------------------- */
+
+/* EditTestStyles.css */
+
+.edit-test-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-test-container h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.edit-test-container form {
+  margin-bottom: 30px;
+}
+
+.edit-test-container label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.edit-test-container input[type="text"],
+.edit-test-container textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.edit-test-container textarea {
+  resize: vertical;
+}
+
+.edit-test-container button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-test-container button.save-button {
+  background-color: #2196f3;
+}
+
+.edit-test-container button.delete-button {
+  background-color: #f44336;
+}
+
+.edit-test-container button.add-button {
+  background-color: #ffc107;
+}
+
+.edit-test-container button:hover {
+  background-color: #45a049;
+}
+
+.edit-test-container ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.edit-test-container ul li {
+  margin-bottom: 10px;
+}
+
+.edit-test-container ul li span {
+  color: #666;
+}
+
+.edit-test-container ul li button,
+.edit-test-container ul li span {
+  margin-left: 10px;
 }

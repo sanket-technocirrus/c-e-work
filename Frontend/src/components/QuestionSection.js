@@ -4,6 +4,8 @@ import "./QuestionSection.css";
 // for showing question passed from question ui on landing page
 
 const QuestionSection = ({ questionContent }) => {
+  // console.log("Question Content:", questionContent);
+
   return (
     <div className="question-section">
       {questionContent ? (
