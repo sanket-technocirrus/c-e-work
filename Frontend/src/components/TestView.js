@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import "./TestView.css";
 
 const TestView = () => {
   const [questions, setQuestions] = useState([]);
-  const { testId } = useParams(); // Ensure test_id is correctly extracted
+  const { testId } = useParams();
 
   useEffect(() => {
-    console.log("Test ID:", testId); // Log test_id to verify its value
+    console.log("Test ID:", testId);
 
     const fetchQuestions = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/tests/${testId}/questions`, // Use test_id in the URL
+          `http://localhost:5000/tests/${testId}/questions`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -29,13 +30,13 @@ const TestView = () => {
   }, [testId]);
 
   return (
-    <div>
-      <h1>Test Questions</h1>
-      <ul>
+    <div className="TestView-container">
+      <h1 className="TestView-title">Test Questions</h1>
+      <ul className="TestView-list">
         {questions.map((question) => (
-          <li key={question.question_id}>
-            {/* <h3>Question ID: {question.question_id}</h3> */}
+          <li key={question.question_id} className="TestView-item">
             <div
+              className="TestView-question"
               dangerouslySetInnerHTML={{ __html: question.question_content }}
             ></div>
           </li>

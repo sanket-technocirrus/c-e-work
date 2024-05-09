@@ -31,7 +31,7 @@ const AdminDashboard = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      fetchUsers(); // Refresh users after deletion
+      fetchUsers(); // refresh users after deletion
     } catch (error) {
       console.error("Error deleting user:", error);
     }

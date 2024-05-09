@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./SignupForm.css"; // Import the CSS file
+import "./SignupForm.css";
 
 const SignupForm = () => {
   const [email, setEmail] = useState("");
@@ -35,11 +35,9 @@ const SignupForm = () => {
   return (
     <div className="signup-container">
       {" "}
-      {/* Apply class to main container */}
-      <h1 className="signup-header">Signup</h1> {/* Apply class to header */}
+      <h1 className="signup-header">Signup</h1>
       <form onSubmit={handleSubmit} className="signup-form">
         {" "}
-        {/* Apply class to form */}
         <input
           type="email"
           placeholder="Email"
@@ -75,12 +73,10 @@ const SignupForm = () => {
         <button type="submit" className="signup-button">
           Signup
         </button>{" "}
-        {/* Apply class to button */}
       </form>
       <button onClick={handleLoginClick} className="login-button">
         Already a User? Click Here
       </button>{" "}
-      {/* Apply class to button */}
     </div>
   );
 };

@@ -12,6 +12,7 @@ import TestView from "./components/TestView";
 import EditTest from "./components/EditTest";
 import ManageParticipants from "./components/ManageParticipants";
 import AttemptTest from "./components/AttemptTest";
+import ThankYou from "./components/ThankYou";
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/landing/:questionId" element={<Landing />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/questions/:testId" element={<QuestionUi />} />
+          <Route path="/questions" element={<QuestionUi />} />
           <Route path="/user/dashboard/:user_id" element={<UserDashboard />} />
           <Route path="/create-test/:test_id" element={<CreateTest />} />
           <Route path="/test/:testId/view-questions" element={<TestView />} />
@@ -32,6 +33,7 @@ function App() {
             element={<ManageParticipants />}
           />
           <Route path="/attempt-test-page" element={<AttemptTest />} />
+          <Route path="/thank-you" element={<ThankYou />} />
         </Routes>
       </div>
     </Router>

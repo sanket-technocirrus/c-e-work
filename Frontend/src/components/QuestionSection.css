@@ -1,14 +1,12 @@
-/* QuestionSection.module.css */
-
 .question-section {
   padding: 16px;
   background-color: #f9f9f9;
   border: 1px solid #ccc;
   border-radius: 4px;
-  max-width: 100%; /* Set maximum width */
-  word-wrap: break-word; /* Allow text to wrap */
+  max-width: 100%;
+  word-wrap: break-word;
 }
 
 .problem-statement {
-  white-space: pre-line; /* Preserve line breaks */
+  white-space: pre-line;
 }

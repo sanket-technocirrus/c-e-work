@@ -1,0 +1,26 @@
+.TestView-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.TestView-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.TestView-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.TestView-item {
+  margin-bottom: 20px;
+}
+
+.TestView-question {
+  font-size: 16px;
+  color: #666;
+}

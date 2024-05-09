@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./QuestionUi.css";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const QuestionUi = () => {
-  const navigate = useNavigate();
-  const { testId } = useParams();
+  const testId = localStorage.getItem("test id");
   const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
@@ -29,16 +28,15 @@ const QuestionUi = () => {
   }, [testId]);
 
   return (
-    <div className="question-container">
-      <h2>List of Questions</h2>
-      <ul>
+    <div className="QuestionUi-container">
+      <h2 className="QuestionUi-title">List of Questions</h2>
+      <ul className="QuestionUi-list">
         {questions.map((question, index) => (
-          <li key={index} className="question-box">
+          <li key={index} className="QuestionUi-item">
             <div
+              className="QuestionUi-question"
               dangerouslySetInnerHTML={{ __html: question.question_content }}
             ></div>
-            {/*  for showing question passed from question ui on landing page */}
-
             <Link
               to={{
                 pathname: `/landing/${question.question_id}`,
@@ -46,6 +44,7 @@ const QuestionUi = () => {
                   questionContent: question.question_content,
                 },
               }}
+              className="QuestionUi-link"
             >
               View Question
             </Link>

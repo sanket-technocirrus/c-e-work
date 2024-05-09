@@ -1,94 +1,3 @@
-/* EditTest.css */
-
-/* Container styles */
-/* .container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-form div {
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-input[type="text"],
-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-ul li {
-  margin-bottom: 10px;
-}
-
-/* Button styles */
-/* button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.save-button {
-  background-color: #007bff;
-  color: #fff;
-}
-
-.save-button:hover {
-  background-color: #0056b3;
-}
-
-.delete-button {
-  background-color: #dc3545;
-  color: #fff;
-  margin-left: auto;
-  /* Align to the right */
-/* display: block; */
-/* Make the buttons display as block elements */
-/* } */
-/*
-.delete-button:hover {
-  background-color: #bd2130;
-}
-
-.add-button {
-  background-color: #28a745;
-  color: #fff;
-  margin-left: auto;
-  /* Align to the right */
-/* display: block; */
-/* Make the buttons display as block elements */
-/* } */
-/* 
-.add-button:hover {
-  background-color: #218838;
-} */
-
-/* ----------------------------------------------------------------------- */
-
-/* EditTestStyles.css */
-
 .edit-test-container {
   max-width: 800px;
   margin: 0 auto;
@@ -133,6 +42,7 @@ ul li {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 10px;
 }
 
 .edit-test-container button.save-button {
@@ -158,13 +68,11 @@ ul li {
 
 .edit-test-container ul li {
   margin-bottom: 10px;
-}
-
-.edit-test-container ul li span {
-  color: #666;
+  display: flex;
+  align-items: center;
 }
 
 .edit-test-container ul li button,
 .edit-test-container ul li span {
-  margin-left: 10px;
+  margin-left: auto;
 }
